@@ -50,6 +50,7 @@ public class main {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public static void build_distance_matrix () {
@@ -57,7 +58,7 @@ public class main {
         double[][] tempDistance = new double[matrix.length][matrix.length];
         for (int i = 0; i < matrix.length; i ++) {
             for (int j = 0; j < matrix.length; j ++) {
-                distance = Math.sqrt(Math.pow(matrix[i][0] - matrix[j][0], 2) + (Math.pow(matrix[i][1] - matrix[j][1], 2)));
+                distance = calculate_distance(matrix[i][0], matrix[j][0], matrix[i][1], matrix[j][1]);
                 tempDistance[i][j] = distance;
             }
         }
@@ -70,10 +71,11 @@ public class main {
             }
             System.out.println();
         }
-
-
     }
 
+    public static double calculate_distance (double posX1, double posX2, double posY1, double posY2) {
+        return Math.sqrt(Math.pow(posX1 - posX2, 2) + (Math.pow(posY1 - posY2, 2)));
+    }
 
 
 }
