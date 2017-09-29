@@ -22,8 +22,21 @@ public class main {
         initialize_collect_points();
         build_distance_matrix();
 
+        //GRASP
+        int i = 0;
+        double solution = 0;
+        double solutionNew = 0;
+        while (i <= iterations) {
+            solution = generate_random_solution();
+            solutionNew = local_search();
+            if (solutionNew < solution) {
+                solution = solutionNew;
+            }
+            i++;
+        }
 
-        System.out.print("ok");
+
+        System.out.print(solution);
 
 
     }
@@ -39,7 +52,7 @@ public class main {
     public static void initialize_collect_points() {
         Random random = new Random();
         for (int i = 0; i < nodes.length; i++){
-            nodes[i] = new CollectPoints(i*(random.nextInt(30)), i*(random.nextInt(30)), i*(random.nextInt(60)), i*(random.nextInt(5)));
+            nodes[i] = new CollectPoints(i*(random.nextInt(30)), i*(random.nextInt(30)), i*(random.nextInt(60)), i*(random.nextInt(5)), i);
         }
         matrix = CollectPoints.build_matrix(nodes);
 
@@ -77,5 +90,11 @@ public class main {
         return Math.sqrt(Math.pow(posX1 - posX2, 2) + (Math.pow(posY1 - posY2, 2)));
     }
 
-
+    public static double local_search () {
+        return 0;
+    }
+    //GRASP
+    public static double generate_random_solution () {
+        return 0;
+    }
 }
