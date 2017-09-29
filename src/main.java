@@ -26,17 +26,18 @@ public class main {
         int i = 0;
         double solution = 0;
         double solutionNew = 0;
+        double finalSolution = 0;
         while (i <= iterations) {
             solution = generate_random_solution();
-            solutionNew = local_search();
+            solutionNew = local_search(solution);
             if (solutionNew < solution) {
-                solution = solutionNew;
+                 finalSolution = solutionNew;
             }
             i++;
         }
 
 
-        System.out.print(solution);
+        System.out.print(finalSolution);
 
 
     }
@@ -90,7 +91,7 @@ public class main {
         return Math.sqrt(Math.pow(posX1 - posX2, 2) + (Math.pow(posY1 - posY2, 2)));
     }
 
-    public static double local_search () {
+    public static double local_search (double solution) {
         return 0;
     }
     //GRASP
