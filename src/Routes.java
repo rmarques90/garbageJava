@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -88,6 +89,38 @@ public class Routes {
             matrix[i][4] = collectPoints[i].collectPoint;
         }
         return matrix;
+    }
+
+    //    public static void build_distance_matrix () {
+//        double distance = 0;
+//        double[][] tempDistance = new double[matrix.length][matrix.length];
+//        for (int i = 0; i < matrix.length; i ++) {
+//            for (int j = 0; j < matrix.length; j ++) {
+//                distance = ObjetiveFunction.calculate_distance(matrix[i][0], matrix[j][0], matrix[i][1], matrix[j][1]);
+//                tempDistance[i][j] = distance;
+//            }
+//        }
+//        distanceMatrix = new double[tempDistance.length][tempDistance[0].length];
+//        distanceMatrix = tempDistance;
+//
+//        for (int i = 0; i < distanceMatrix.length; i ++) {
+//            for (int j = 0; j < distanceMatrix[0].length; j++) {
+//                System.out.print(distanceMatrix[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+//    }
+
+    public static Routes[] get_new_neighbor(Routes[] route) {
+        Random rgen = new Random();  // Random number generator
+
+        for (int i=0; i < route.length; i++) {
+            int randomPosition = rgen.nextInt(route.length);
+            Routes temp = route[i];
+            route[i] = route[randomPosition];
+            route[randomPosition] = temp;
+        }
+        return route;
     }
 
 }
