@@ -44,8 +44,8 @@ public class Routes {
         Routes[] randomSolution = new Routes[size];
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            if (i == (main.pointsNumber - 1)) {
-                randomSolution[i] = new Routes(0, 0, 0, 0, i);
+            if (i == (main.pointsNumber - 1) || i == 0) {
+                randomSolution[i] = new Routes(0, 0, 0, 0, 0);
             } else {
                 randomSolution[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i*random.nextInt(10), i);
             }
@@ -53,8 +53,8 @@ public class Routes {
         //shuffle the array
         Random rgen = new Random();  // Random number generator
 
-        for (int i=0; i < randomSolution.length; i++) {
-            int randomPosition = rgen.nextInt(randomSolution.length);
+        for (int i=1; i < (randomSolution.length - 1); i++) {
+            int randomPosition = rgen.nextInt((randomSolution.length - 2) + 1 - 1) + 1;
             Routes temp = randomSolution[i];
             randomSolution[i] = randomSolution[randomPosition];
             randomSolution[randomPosition] = temp;
@@ -114,8 +114,8 @@ public class Routes {
     public static Routes[] get_new_neighbor(Routes[] route) {
         Random rgen = new Random();  // Random number generator
 
-        for (int i=0; i < route.length; i++) {
-            int randomPosition = rgen.nextInt(route.length);
+        for (int i=1; i < (route.length-1); i++) {
+            int randomPosition = rgen.nextInt((route.length - 2) + 1 - 1) + 1;
             Routes temp = route[i];
             route[i] = route[randomPosition];
             route[randomPosition] = temp;

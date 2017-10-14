@@ -3,11 +3,18 @@
  */
 public class ObjetiveFunction {
 
+    private static double medVel = 5.0; //km/h
+
     public ObjetiveFunction () {
     }
 
     public static double calculate_distance (double posX1, double posX2, double posY1, double posY2) {
         return Math.sqrt(Math.pow(posX1 - posX2, 2) + (Math.pow(posY1 - posY2, 2)));
+    }
+
+    public static double calculate_travel_time (double distance) {
+        medVel = medVel * 3.6;
+        return medVel * distance;
     }
 
     public static double calculate_fitness (Routes[] solution) {
@@ -33,7 +40,7 @@ public class ObjetiveFunction {
 
             //calculate the costs
             totalDistanceCost = distance * 0.70;
-            totalTimeCost = collectTotalTime * 0.12;
+            totalTimeCost = (collectTotalTime * 0.12) + (calculate_travel_time(totalDistanceCost));
 
         }
         return totalDistanceCost + totalTimeCost;
