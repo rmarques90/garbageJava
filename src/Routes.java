@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.Random;
 
@@ -8,14 +12,12 @@ public class Routes {
     private double x;
     private double y;
     private double garbage;
-    private double collectTime; // use seconds
     private int collectPoint;
 
-    public Routes(double posX, double posY, double garbageLoad, double timeToCollect, int point) {
+    public Routes(double posX, double posY, double garbageLoad, int point) {
         x = posX;
         y = posY;
         garbage = garbageLoad;
-        collectTime = timeToCollect;
         collectPoint = point;
     }
 
@@ -31,10 +33,6 @@ public class Routes {
         return garbage;
     }
 
-    public double getCollectTime () {
-        return collectTime;
-    }
-
     public int getCollectPoint() {
         return collectPoint;
     }
@@ -45,9 +43,9 @@ public class Routes {
         Random random = new Random();
         for (int i = 0; i < size; i++) {
             if (i == (main.pointsNumber - 1) || i == 0) {
-                randomSolution[i] = new Routes(0, 0, 0, 0, 0);
+                randomSolution[i] = new Routes(0, 0, 0, 0);
             } else {
-                randomSolution[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i*random.nextInt(10), i);
+                randomSolution[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i);
             }
         }
         //shuffle the array
@@ -71,12 +69,44 @@ public class Routes {
         }
     }
 
-    public static void initialize_collect_points() {
-        Random random = new Random();
-        for (int i = 0; i < main.nodes.length; i++){
-            main.nodes[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i*random.nextInt(10), i);
+    public static void initialize_collect_points(Boolean csvFile) {
+        if (csvFile) {
+            String line;
+
+            BufferedReader stream;
+            String[] splitted;
+            int index = 0;
+
+            try {
+                stream = new BufferedReader(new FileReader(main.routesFilePath));
+                while ((stream.readLine()) != null) {
+                    main.pointsNumber++;
+                }
+                stream = new BufferedReader(new FileReader(main.routesFilePath));
+                main.nodes = new Routes[main.pointsNumber];
+                while ((line = stream.readLine()) != null) {
+                    splitted = line.split(";");
+                    main.nodes[index] = new Routes(
+                            Double.parseDouble(splitted[0]),
+                            Double.parseDouble(splitted[1]),
+                            Double.parseDouble(splitted[2]),
+                            Integer.parseInt(splitted[3]));
+                    index++;
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            main.pointsNumber = main.nodes.length;
+            main.matrix = Routes.build_matrix(main.nodes);
+        } else {
+            Random random = new Random();
+            main.nodes = new Routes[10];
+            main.pointsNumber = main.nodes.length;
+            for (int i = 0; i < main.nodes.length; i++){
+                main.nodes[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i);
+            }
+            main.matrix = Routes.build_matrix(main.nodes);
         }
-        main.matrix = Routes.build_matrix(main.nodes);
     }
 
     public static double[][] build_matrix (Routes[] collectPoints) {
@@ -85,18 +115,18 @@ public class Routes {
             matrix[i][0] = collectPoints[i].x;
             matrix[i][1] = collectPoints[i].y;
             matrix[i][2] = collectPoints[i].garbage;
-            matrix[i][3] = collectPoints[i].collectTime;
-            matrix[i][4] = collectPoints[i].collectPoint;
+            matrix[i][3] = collectPoints[i].collectPoint;
         }
         return matrix;
     }
+
 
     //    public static void build_distance_matrix () {
 //        double distance = 0;
 //        double[][] tempDistance = new double[matrix.length][matrix.length];
 //        for (int i = 0; i < matrix.length; i ++) {
 //            for (int j = 0; j < matrix.length; j ++) {
-//                distance = ObjetiveFunction.calculate_distance(matrix[i][0], matrix[j][0], matrix[i][1], matrix[j][1]);
+//                distance = ObjectiveFunction.calculate_distance(matrix[i][0], matrix[j][0], matrix[i][1], matrix[j][1]);
 //                tempDistance[i][j] = distance;
 //            }
 //        }
@@ -111,7 +141,7 @@ public class Routes {
 //        }
 //    }
 
-    public static Routes[] get_new_neighbor(Routes[] route) {
+    public static Routes[] mutate_solution(Routes[] route) {
         Random rgen = new Random();  // Random number generator
 
         for (int i=1; i < (route.length-1); i++) {
@@ -121,6 +151,15 @@ public class Routes {
             route[randomPosition] = temp;
         }
         return route;
+    }
+
+    public static Routes[] crossover (Routes[] route) {
+        int size = route.length;
+        Routes[] newRoute = new Routes[size];
+
+
+
+        return newRoute;
     }
 
 }

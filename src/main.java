@@ -3,6 +3,8 @@
  */
 
 public class main {
+    public static String routesFilePath = "routes.csv";
+
     public static Timer timer = new Timer();
 
     public static int iterations = 1000;
@@ -13,20 +15,19 @@ public class main {
     public static int trucks = 0;
     public static int truckLoad = 300;
 
-    public static int pointsNumber = 10;
-    public static Routes[] nodes = new Routes[pointsNumber];
+    public static int pointsNumber = 0;
+    public static Routes[] nodes;
     public static double[][] matrix;
 
-    public static Routes[] finalSolution = new Routes[pointsNumber];
+    public static Routes[] finalSolution;
     public static double finalFitness;
 
     public static void main (String[] args) {
         timer.start();
-        Routes.initialize_garbage_trucks(1);
-        Routes.initialize_collect_points();
+        Routes.initialize_garbage_trucks(trucks);
+        Routes.initialize_collect_points(true);
 
-        SolveLocal solve = new SolveLocal();
-        solve.grasp();
+        SolveLocal.grasp();
 
         timer.stop();
         print_results();
