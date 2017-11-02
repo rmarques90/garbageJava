@@ -19,8 +19,7 @@ public class main {
     public static Routes[] nodes;
     public static double[][] matrix;
 
-    public static Routes[] finalSolution;
-    public static double finalFitness;
+    public static Solution finalSolution = new Solution();
 
     public static void main (String[] args) {
         timer.start();
@@ -36,13 +35,13 @@ public class main {
     private static void print_results() {
         System.out.print("Tempo para Execução (Segundos): " + timer.getTime());
         System.out.println();
-        for (int index = 0; index < finalSolution.length; index++) {
+        for (int index = 0; index < finalSolution.getSolution().length; index++) {
             if (index == 0) {
                 System.out.print("Solução Final: ");
             }
-            System.out.print(finalSolution[index].getCollectPoint() + " ");
+            System.out.print(finalSolution.getSolution()[index].getCollectPoint() + " ");
         }
         System.out.println();
-        System.out.print("Função Objetiva = " + finalFitness);
+        System.out.print("Função Objetiva = " + finalSolution.getFitness());
     }
 }

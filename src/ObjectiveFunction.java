@@ -50,13 +50,23 @@ public class ObjectiveFunction {
             }
             totalDistanceCost = totalDistanceCost + (calculate_distance_cost(x1, x2, y1, y2) / worst_distance_cost());
             garbageTotal = garbageTotal + solution[i].getGarbage();
-            totalTimeCost = totalTimeCost + calculate_travel_time(calculate_distance_cost(x1, x2, y1, y2));
+//            totalTimeCost = totalTimeCost + calculate_travel_time(calculate_distance_cost(x1, x2, y1, y2));
         }
         totalDistanceCost = totalDistanceCost / solution.length;
 
         trucksQty = garbageTotal / main.truckLoad;
 
-        fitness = totalDistanceCost + (garbageTotal / calculate_total_garbage()) + (totalTimeCost/worst_distance_cost()) + trucksQty;
+        fitness = totalDistanceCost + (garbageTotal / calculate_total_garbage()) + trucksQty;
         return fitness;
+    }
+
+    public static Boolean check_best_solution_by_fitness (Solution solution) {
+        double oldFitness = main.finalSolution.getFitness();
+        if (solution.getFitness() > oldFitness) {
+            main.finalSolution = solution;
+            return true;
+        } else {
+            return false;
+        }
     }
 }

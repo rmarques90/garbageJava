@@ -5,19 +5,20 @@ public class SolveLocal {
 
     public static void grasp () {
         int i = 0;
-        Routes[] newSolution;
-        double newSolutionFitness;
-        Solution solution = new Solution();
+        Solution newSolution = new Solution();
+        newSolution.setSolution(Routes.generate_random_solution());
+        newSolution.setFitness(ObjectiveFunction.calculate_fitness(newSolution.getSolution()));
 
-        main.finalSolution = Routes.generate_random_solution();
-        main.finalFitness = ObjectiveFunction.calculate_fitness(main.finalSolution);
+        main.finalSolution.setSolution(Routes.generate_random_solution());
+        main.finalSolution.setFitness(ObjectiveFunction.calculate_fitness(main.finalSolution.getSolution()));
 
         while (i <= main.iterations) {
-            newSolution = Routes.mutate_solution(main.finalSolution);
-            newSolutionFitness = ObjectiveFunction.calculate_fitness(main.finalSolution);
-            if (newSolutionFitness < main.finalFitness) {
-                main.finalSolution = newSolution;
-                main.finalFitness = newSolutionFitness;
+            Boolean newBestThanOlder = ObjectiveFunction.check_best_solution_by_fitness(newSolution);
+            if (newBestThanOlder) {
+                newSolution.setSolution(GA.mutate_solution(newSolution.getSolution()));
+            } else {
+                newSolution.setSolution(Routes.generate_random_solution());
+                newSolution.setFitness(ObjectiveFunction.calculate_fitness(newSolution.getSolution()));
             }
             i++;
         }

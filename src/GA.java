@@ -1,24 +1,19 @@
-import java.util.ArrayList;
+import java.util.Random;
 
 public class GA {
 
-    public static void genetic_algorithm () {
-        int i = 0;
-        Routes[] newRoute;
-        double newRouteFitness;
+    public static Routes[] mutate_solution (Routes[] route) {
+        Random rgen = new Random();  // Random number generator
 
-        ArrayList<Routes[]> routesList = new ArrayList<>(10);
-
-        for (int j = 0; j < 11; j ++) {
-            routesList.add(Routes.generate_random_solution());
+        for (int i=1; i < (route.length-1); i++) {
+            int randomPosition = rgen.nextInt((route.length - 2) + 1 - 1) + 1;
+            Routes temp = route[i];
+            route[i] = route[randomPosition];
+            route[randomPosition] = temp;
         }
 
-        main.finalSolution = Routes.generate_random_solution();
-        main.finalFitness = ObjectiveFunction.calculate_fitness(main.finalSolution);
-
-        while(i <= main.iterations) {
-
-        }
-
+        return route;
     }
+
+
 }
