@@ -7,6 +7,7 @@ public class SolveLocal {
         int i = 0;
         Routes[] newSolution;
         double newSolutionFitness;
+        Solution solution = new Solution();
 
         main.finalSolution = Routes.generate_random_solution();
         main.finalFitness = ObjectiveFunction.calculate_fitness(main.finalSolution);
