@@ -7,5 +7,28 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/buildSrc/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.doc/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.example/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.ext/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.ext/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.prog/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.prog/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.tool/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.tool/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.xml/src/jmh/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.xml/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics.xml/src/test/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics/src/jmh/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics/src/main/java" />
+          <root url="file://$USER_HOME$/Downloads/jenetics-3.9.0/jenetics/src/test/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

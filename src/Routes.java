@@ -120,22 +120,21 @@ public class Routes {
         return matrix;
     }
 
-
-    //    public static void build_distance_matrix () {
+//        public static void build_distance_matrix () {
 //        double distance = 0;
-//        double[][] tempDistance = new double[matrix.length][matrix.length];
-//        for (int i = 0; i < matrix.length; i ++) {
-//            for (int j = 0; j < matrix.length; j ++) {
-//                distance = ObjectiveFunction.calculate_distance(matrix[i][0], matrix[j][0], matrix[i][1], matrix[j][1]);
+//        double[][] tempDistance = new double[main.matrix.length][main.matrix.length];
+//        for (int i = 0; i < main.matrix.length; i ++) {
+//            for (int j = 0; j < main.matrix.length; j ++) {
+//                distance = ObjectiveFunction.calculate_distance(main.matrix[i][0], main.matrix[j][0], main.matrix[i][1], main.matrix[j][1]);
 //                tempDistance[i][j] = distance;
 //            }
 //        }
-//        distanceMatrix = new double[tempDistance.length][tempDistance[0].length];
-//        distanceMatrix = tempDistance;
+//        main.distanceMatrix = new double[tempDistance.length][tempDistance[0].length];
+//        main.distanceMatrix = tempDistance;
 //
-//        for (int i = 0; i < distanceMatrix.length; i ++) {
-//            for (int j = 0; j < distanceMatrix[0].length; j++) {
-//                System.out.print(distanceMatrix[i][j] + " ");
+//        for (int i = 0; i < main.distanceMatrix.length; i ++) {
+//            for (int j = 0; j < main.distanceMatrix[0].length; j++) {
+//                System.out.print(main.distanceMatrix[i][j] + " ");
 //            }
 //            System.out.println();
 //        }
