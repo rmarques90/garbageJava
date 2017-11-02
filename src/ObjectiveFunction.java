@@ -3,7 +3,7 @@
  */
 public class ObjectiveFunction {
 
-    //calcular o custo do trajeto + se coletou todos os lixos estabelecidos + penalizar se estourou 6 horas +
+    //calcular o custo do trajeto + se coletou todos os lixos estabelecidos + penalizar se estourou 6 horas
     private static double medVel = 10.0; //km/h
     private static double gasCost = 3.98; //valor da gasolina
 
@@ -13,6 +13,14 @@ public class ObjectiveFunction {
 
     public static double worst_distance_cost () {
         return (main.workHours * medVel) * gasCost;
+    }
+
+    public static double calculate_total_garbage () {
+        double totalGarbage = 0;
+        for (int i=0; i < main.nodes.length; i++) {
+            totalGarbage += main.nodes[i].getGarbage();
+        }
+        return totalGarbage;
     }
 
     public static double calculate_distance_cost (double posX1, double posX2, double posY1, double posY2) {
@@ -26,7 +34,7 @@ public class ObjectiveFunction {
     }
 
     public static double calculate_fitness (Routes[] solution) {
-        double x1, x2, y1, y2, distance = 0, garbageTotal = 0, collectTotalTime = 0, totalTimeCost = 0, totalDistanceCost = 0, fitness = 0, trucksQty = 0;
+        double x1, x2, y1, y2, garbageTotal = 0, totalTimeCost = 0, totalDistanceCost = 0, fitness = 0, trucksQty = 0;
         int size = solution.length;
         for (int i = 0; i < size; i++) {
             if (i == size - 1) {
@@ -40,8 +48,15 @@ public class ObjectiveFunction {
                 y1 = solution[i].getY();
                 y2 = solution[i+1].getY();
             }
+            totalDistanceCost = totalDistanceCost + (calculate_distance_cost(x1, x2, y1, y2) / worst_distance_cost());
+            garbageTotal = garbageTotal + solution[i].getGarbage();
+            totalTimeCost = totalTimeCost + calculate_travel_time(calculate_distance_cost(x1, x2, y1, y2));
         }
+        totalDistanceCost = totalDistanceCost / solution.length;
 
+        trucksQty = garbageTotal / main.truckLoad;
+
+        fitness = totalDistanceCost + (garbageTotal / calculate_total_garbage()) + (totalTimeCost/worst_distance_cost()) + trucksQty;
         return fitness;
     }
 }
