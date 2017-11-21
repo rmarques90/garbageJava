@@ -19,13 +19,13 @@ public class Maps {
     private static void getGeocoding() throws MalformedURLException {
 //        https://developers.google.com/maps/documentation/geocoding/intro#GeocodingRequests
         try {
-            String address = "Goiânia";
+            String address = "Res.+Porto+Seguro";
             URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + keyGeo);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
 
             try {
-                File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "teste.json");
+                File file = new File(System.getProperty("java.io.tmpdir") + File.separator + address +".json");
                 InputStream in = connection.getInputStream();
                 FileOutputStream fos = new FileOutputStream(file);
 
@@ -81,8 +81,10 @@ public class Maps {
     }
 
     public static void main(String[] args) throws MalformedURLException {
-        getNearbySearch();
+        getGeocoding();
         //        https://www.quora.com/How-do-you-get-boundaries-of-neighborhoods-via-the-Google-Maps-api
+//        https://stackoverflow.com/questions/10522393/google-maps-get-polygon-border-of-zones-neighborhood
+//        http://wikimapia.org/api/
 
 
     }
