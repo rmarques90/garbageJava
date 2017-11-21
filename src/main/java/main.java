@@ -43,5 +43,6 @@ public class main {
         }
         System.out.println();
         System.out.print("Função Objetiva = " + finalSolution.getFitness());
+        System.out.println();
     }
 }
