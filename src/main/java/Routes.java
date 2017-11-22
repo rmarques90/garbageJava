@@ -13,12 +13,41 @@ public class Routes {
     private double y;
     private double garbage;
     private int collectPoint;
+    private String separator;
 
     public Routes(double posX, double posY, double garbageLoad, int point) {
         x = posX;
         y = posY;
         garbage = garbageLoad;
         collectPoint = point;
+    }
+
+    public Routes(String separator) {
+        this.separator = separator;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setGarbage(double garbage) {
+        this.garbage = garbage;
+    }
+
+    public void setCollectPoint(int collectPoint) {
+        this.collectPoint = collectPoint;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        this.separator = separator;
     }
 
     public double getX () {
@@ -38,14 +67,18 @@ public class Routes {
     }
 
     public static Routes[] generate_random_solution () {
-        int size = main.pointsNumber;
+        int size = main.pointsNumber + main.trucks;
         Routes[] randomSolution = new Routes[size];
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            if (i == (main.pointsNumber - 1) || i == 0) {
-                randomSolution[i] = new Routes(0, 0, 0, 0);
+            if (i >= main.pointsNumber && i < size) {
+                randomSolution[i] = new Routes("t");
             } else {
-                randomSolution[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i);
+                if (i == (main.pointsNumber - 1) || i == 0) {
+                    randomSolution[i] = new Routes(0, 0, 0, 0);
+                } else {
+                    randomSolution[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i);
+                }
             }
         }
         //shuffle the array

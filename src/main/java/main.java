@@ -12,7 +12,7 @@ public class main {
     public static int workHours = 6;
 
     public static int max_allowed_trucks = 10;
-    public static int trucks = 0;
+    public static int trucks = 5;
     public static int truckLoad = 300;
 
     public static int pointsNumber = 0;
