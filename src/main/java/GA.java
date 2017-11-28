@@ -12,19 +12,16 @@ import java.util.List;
 
 //https://www.programcreek.com/java-api-examples/index.php?source_dir=CARMA-master/SIMULATION/eu.quanticol.ms/libs/commons-math3-3.4.1-src/src/userguide/java/org/apache/commons/math3/userguide/genetics/HelloWorldExample.java
 public class GA {
-    public static final int    POPULATION_SIZE   = 1000;
+    public static final int    POPULATION_SIZE   = 10000;
     public static final double CROSSOVER_RATE    = 0.9;
     public static final double MUTATION_RATE     = 0.03;
     public static final double ELITISM_RATE      = 0.1;
     public static final int    TOURNAMENT_ARITY  = 2;
 
-    public static final String TARGET_STRING = "Hello World!";
-    public static final int DIMENSION = TARGET_STRING.length();
-
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        GeneticAlgorithm ga = new GeneticAlgorithm(new OnePointCrossover<Character>(), CROSSOVER_RATE,
-                new RandomCharacterMutation(), MUTATION_RATE,
+        GeneticAlgorithm ga = new GeneticAlgorithm(new OnePointCrossover<Routes>(), CROSSOVER_RATE,
+                new RandomMutation(), MUTATION_RATE,
                 new TournamentSelection(TOURNAMENT_ARITY));
 
         Population initial = getInitialPopulation();
@@ -41,9 +38,11 @@ public class GA {
                 generation++;
 
                 double fitness = fittestChromosome.fitness();
-                if (Precision.equals(fitness, 0.0, 1e-6)) {
+                if (generation == 300) {
+                    System.out.println(fitness);
                     return true;
                 } else {
+                    System.out.println(fitness);
                     return false;
                 }
             }
@@ -60,86 +59,34 @@ public class GA {
         System.out.println("Total execution time: " + (endTime - startTime) + "ms");
     }
 
-    private static List<Character> randomRepresentation(int length) {
-        return asList(RandomStringUtils.randomAscii(length));
-    }
-
-    private static List<Character> asList(String str) {
-        return Arrays.asList(ArrayUtils.toObject(str.toCharArray()));
-    }
-
     private static Population getInitialPopulation() {
         List<Chromosome> popList = new LinkedList<Chromosome>();
+        List<Routes> rt = new ArrayList<Routes>();
 
         for(int i = 0; i < POPULATION_SIZE; i++) {
-            popList.add(new StringChromosome(randomRepresentation(DIMENSION)));
+            for (int j = 0; j < 60; j++) {
+                rt.add(new Routes(1,1,1,1));
+            }
+            popList.add(new RouteChromosome(rt));
+            rt.clear();
         }
         return new ElitisticListPopulation(popList, 2 * popList.size(), ELITISM_RATE);
     }
 
-    public static class StringChromosome extends AbstractListChromosome<Character> {
-
-        public StringChromosome(List<Character> repr) {
-            super(repr);
-        }
-
-        public StringChromosome(String str) {
-            this(asList(str));
-        }
-
-        public double fitness() {
-            String target = TARGET_STRING;
-            int f = 0;
-            List<Character> chromosome = getRepresentation();
-            for (int i = 0, c = target.length(); i < c; i++) {
-                f -= FastMath.abs(target.charAt(i) - chromosome.get(i).charValue());
-            }
-            return f;
-        }
-
-        @Override
-        protected void checkValidity(List<Character> repr) throws InvalidRepresentationException {
-            for (char c : repr) {
-                if (c < 32 || c > 126) {
-                    throw new InvalidRepresentationException(LocalizedFormats.INVALID_FIXED_LENGTH_CHROMOSOME);
-                }
-            }
-        }
-
-        public List<Character> getStringRepresentation() {
-            return getRepresentation();
-        }
-
-        @Override
-        public StringChromosome newFixedLengthChromosome(List<Character> repr) {
-            return new StringChromosome(repr);
-        }
-
-        @Override
-        public String toString() {
-            StringBuffer sb = new StringBuffer();
-            for (Character i : getRepresentation()) {
-                sb.append(i.charValue());
-            }
-            return String.format("(f=%s '%s')", getFitness(), sb.toString());
-        }
-
-    }
-
-    private static class RandomCharacterMutation implements MutationPolicy {
+    private static class RandomMutation implements MutationPolicy {
         public Chromosome mutate(Chromosome original) {
-            if (!(original instanceof StringChromosome)) {
+            if (!(original instanceof RouteChromosome)) {
                 throw new IllegalArgumentException();
             }
 
-            StringChromosome strChromosome = (StringChromosome) original;
-            List<Character> characters = strChromosome.getStringRepresentation();
+            RouteChromosome strChromosome = (RouteChromosome) original;
+            List<Routes> rts = strChromosome.getRoutesRepresentation();
 
-            int mutationIndex = GeneticAlgorithm.getRandomGenerator().nextInt(characters.size());
+            int mutationIndex = GeneticAlgorithm.getRandomGenerator().nextInt(rts.size());
 
-            List<Character> mutatedChromosome = new ArrayList<Character>(characters);
-            char newValue = (char) (32 + GeneticAlgorithm.getRandomGenerator().nextInt(127 - 32));
-            mutatedChromosome.set(mutationIndex, newValue);
+            List<Routes> mutatedChromosome = new ArrayList<Routes>(rts);
+            Routes routes = new Routes(3,2,4,1);
+            mutatedChromosome.set(mutationIndex, routes);
 
             return strChromosome.newFixedLengthChromosome(mutatedChromosome);
         }

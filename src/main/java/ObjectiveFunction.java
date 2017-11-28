@@ -12,8 +12,6 @@ public class ObjectiveFunction {
     private static double medVel = 10.0; //km/h
     private static double gasCost = 3.98; //valor da gasolina
 
-    private static int solutionIndex = 0;
-
 
     public ObjectiveFunction () {
     }
@@ -35,8 +33,11 @@ public class ObjectiveFunction {
         return distance * gasCost;
     }
 
-    public static double calculate_fitness (Solution solution) {
-        List<Routes> routes = solution.getSolution();
+    public static double calculate_distance (double posX1, double posX2, double posY1, double posY2) {
+        return Math.sqrt(Math.pow(posX1 - posX2, 2) + (Math.pow(posY1 - posY2, 2)));
+    }
+
+    public static double calculate_fitness (List<Routes> routes) {
         List<Routes> temp = new ArrayList<Routes>();
         double fitness = 0d;
         int finalIndex = 0;
@@ -55,19 +56,20 @@ public class ObjectiveFunction {
                 index++;
             }
             if (temp.size() > 0) {
-                fitness += calculate_fitness_value(temp);
+                fitness += calculate_distance_fitness(temp);
+                fitness += calculate_garbage_fitness(temp);
+                fitness += calculate_distance_fitness(temp);
                 trucksQty++;
             }
             temp.clear();
             finalIndex++;
         }
         fitness += trucksQty / main.trucks;
-        solution.setFitness(fitness);
         return fitness;
     }
 
-    public static double calculate_fitness_value (List<Routes> rt) {
-        double x1, x2, y1, y2, garbageTotal = 0, totalTimeCost = 0, totalDistanceCost = 0, fitness = 0;
+    public static double calculate_distance_fitness (List<Routes> rt) {
+        double x1, x2, y1, y2, distanceFitness = 0;
         int size = rt.size();
         for (int i = 0; i < size; i++) {
             if (i == size - 1) {
@@ -81,15 +83,27 @@ public class ObjectiveFunction {
                 y1 = rt.get(i).getY();
                 y2 = rt.get(i+1).getY();
             }
-            totalDistanceCost = totalDistanceCost + (calculate_distance_cost(x1, x2, y1, y2) / worst_distance_cost());
-            garbageTotal = garbageTotal + rt.get(i).getGarbage();
-//            totalTimeCost = totalTimeCost + calculate_travel_time(calculate_distance_cost(x1, x2, y1, y2));
+            distanceFitness += calculate_distance_cost(x1, x2, y1, y2) / worst_distance_cost();
         }
+        return distanceFitness;
+    }
 
-        totalDistanceCost = totalDistanceCost / rt.size();
+    public static double calculate_garbage_fitness (List<Routes> rt) {
+        double garbageFitness =0, totalGarbage=0;
+        for (int i=0; i < rt.size(); i++) {
+            totalGarbage += rt.get(i).getGarbage();
+        }
+        garbageFitness = totalGarbage / main.truckLoad;
+        return garbageFitness;
+    }
 
-        fitness = totalDistanceCost + (garbageTotal / calculate_total_garbage());
-        return fitness;
+    public static double calculate_collect_time (List<Routes> rt) {
+        double collectTimeFitness =0, totalCollectTime=0, totalDistance=0;
+        for (int i=0; i < rt.size(); i++) {
+            totalDistance += calculate_distance(rt.get(i).getX(), rt.get(i+1).getX(), rt.get(i).getY(), rt.get(i+1).getY());
+        }
+        totalCollectTime = totalDistance * medVel;
+        return collectTimeFitness;
     }
 
     public static Boolean check_best_solution_by_fitness (Solution solution) {
