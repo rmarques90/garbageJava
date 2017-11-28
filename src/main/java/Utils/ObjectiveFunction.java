@@ -1,7 +1,7 @@
+package Utils;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by fox on 27/09/17.
@@ -56,15 +56,15 @@ public class ObjectiveFunction {
                 index++;
             }
             if (temp.size() > 0) {
-                fitness += calculate_distance_fitness(temp);
-                fitness += calculate_garbage_fitness(temp);
-                fitness += calculate_distance_fitness(temp);
+                fitness -= calculate_distance_fitness(temp);
+                fitness -= calculate_garbage_fitness(temp);
+                fitness -= calculate_distance_fitness(temp);
                 trucksQty++;
             }
             temp.clear();
             finalIndex++;
         }
-        fitness += trucksQty / main.trucks;
+        fitness -= trucksQty / main.trucks;
         return fitness;
     }
 

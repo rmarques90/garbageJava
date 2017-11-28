@@ -1,3 +1,7 @@
+package GeneticAlgorithm;
+
+import Utils.ObjectiveFunction;
+import Utils.Routes;
 import org.apache.commons.math3.genetics.AbstractListChromosome;
 import org.apache.commons.math3.genetics.InvalidRepresentationException;
 
