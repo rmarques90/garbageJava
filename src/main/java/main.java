@@ -1,3 +1,5 @@
+import java.util.List;
+
 /**
  * Created by fox on 26/09/17.
  */
@@ -16,7 +18,7 @@ public class main {
     public static int truckLoad = 300;
 
     public static int pointsNumber = 0;
-    public static Routes[] nodes;
+    public static List<Routes> nodes;
     public static double[][] matrix;
 
     public static Solution finalSolution = new Solution();
@@ -35,11 +37,11 @@ public class main {
     private static void print_results() {
         System.out.print("Tempo para Execução (Segundos): " + timer.getTime());
         System.out.println();
-        for (int index = 0; index < finalSolution.getSolution().length; index++) {
+        for (int index = 0; index < finalSolution.getSolution().size(); index++) {
             if (index == 0) {
                 System.out.print("Solução Final: ");
             }
-            System.out.print(finalSolution.getSolution()[index].getCollectPoint() + " ");
+            System.out.print(finalSolution.getSolution().get(index).getCollectPoint() + " ");
         }
         System.out.println();
         System.out.print("Função Objetiva = " + finalSolution.getFitness());

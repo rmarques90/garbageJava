@@ -2,7 +2,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -66,30 +68,23 @@ public class Routes {
         return collectPoint;
     }
 
-    public static Routes[] generate_random_solution () {
+    public static List<Routes> generate_random_solution () {
         int size = main.pointsNumber + main.trucks;
-        Routes[] randomSolution = new Routes[size];
+        List<Routes> randomSolution = new ArrayList<Routes>();
         Random random = new Random();
         for (int i = 0; i < size; i++) {
             if (i >= main.pointsNumber && i < size) {
-                randomSolution[i] = new Routes("t");
+                randomSolution.add(new Routes("t"));
             } else {
                 if (i == (main.pointsNumber - 1) || i == 0) {
-                    randomSolution[i] = new Routes(0, 0, 0, 0);
+                    randomSolution.add(new Routes(0, 0, 0, 0));
                 } else {
-                    randomSolution[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i);
+                    randomSolution.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
                 }
             }
         }
         //shuffle the array
-        Random rgen = new Random();  // Random number generator
-
-        for (int i=1; i < (randomSolution.length - 1); i++) {
-            int randomPosition = rgen.nextInt((randomSolution.length - 2) + 1 - 1) + 1;
-            Routes temp = randomSolution[i];
-            randomSolution[i] = randomSolution[randomPosition];
-            randomSolution[randomPosition] = temp;
-        }
+        Collections.shuffle(randomSolution);
         return randomSolution;
     }
 
@@ -108,7 +103,6 @@ public class Routes {
 
             BufferedReader stream;
             String[] splitted;
-            int index = 0;
 
             try {
                 stream = new BufferedReader(new FileReader(main.routesFilePath));
@@ -116,39 +110,38 @@ public class Routes {
                     main.pointsNumber++;
                 }
                 stream = new BufferedReader(new FileReader(main.routesFilePath));
-                main.nodes = new Routes[main.pointsNumber];
+                main.nodes = new ArrayList<Routes>();
                 while ((line = stream.readLine()) != null) {
                     splitted = line.split(";");
-                    main.nodes[index] = new Routes(
+                    main.nodes.add(new Routes(
                             Double.parseDouble(splitted[0]),
                             Double.parseDouble(splitted[1]),
                             Double.parseDouble(splitted[2]),
-                            Integer.parseInt(splitted[3]));
-                    index++;
+                            Integer.parseInt(splitted[3])));
                 }
             } catch (Exception e) {
                 System.out.println(e);
             }
-            main.pointsNumber = main.nodes.length;
+            main.pointsNumber = main.nodes.size();
             main.matrix = Routes.build_matrix(main.nodes);
         } else {
             Random random = new Random();
-            main.nodes = new Routes[10];
-            main.pointsNumber = main.nodes.length;
-            for (int i = 0; i < main.nodes.length; i++){
-                main.nodes[i] = new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i);
+            main.nodes = new ArrayList<Routes>();
+            main.pointsNumber = 10;
+            for (int i = 0; i < main.pointsNumber; i++){
+                main.nodes.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
             }
             main.matrix = Routes.build_matrix(main.nodes);
         }
     }
 
-    public static double[][] build_matrix (Routes[] collectPoints) {
-        double[][] matrix = new double[collectPoints.length][5];
-        for (int i = 0; i < collectPoints.length; i++) {
-            matrix[i][0] = collectPoints[i].x;
-            matrix[i][1] = collectPoints[i].y;
-            matrix[i][2] = collectPoints[i].garbage;
-            matrix[i][3] = collectPoints[i].collectPoint;
+    public static double[][] build_matrix (List<Routes> collectPoints) {
+        double[][] matrix = new double[collectPoints.size()][5];
+        for (int i = 0; i < collectPoints.size(); i++) {
+            matrix[i][0] = collectPoints.get(i).x;
+            matrix[i][1] = collectPoints.get(i).y;
+            matrix[i][2] = collectPoints.get(i).garbage;
+            matrix[i][3] = collectPoints.get(i).collectPoint;
         }
         return matrix;
     }

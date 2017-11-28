@@ -1,11 +1,16 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by fox on 27/09/17.
  */
 public class ObjectiveFunction {
 
-    //calcular o custo do trajeto + se coletou todos os lixos estabelecidos + penalizar se estourou 6 horas
+    //calcular o custo do trajeto + se coletou todos os lixos estabelecidos + penalizar se estourou 6 horas + descartar solucao se nao coletou todo lixo
     private static double medVel = 10.0; //km/h
     private static double gasCost = 3.98; //valor da gasolina
+
+    private static int solutionIndex = 0;
 
 
     public ObjectiveFunction () {
@@ -17,8 +22,8 @@ public class ObjectiveFunction {
 
     public static double calculate_total_garbage () {
         double totalGarbage = 0;
-        for (int i=0; i < main.nodes.length; i++) {
-            totalGarbage += main.nodes[i].getGarbage();
+        for (int i=0; i < main.nodes.size(); i++) {
+            totalGarbage += main.nodes.get(i).getGarbage();
         }
         return totalGarbage;
     }
@@ -28,31 +33,51 @@ public class ObjectiveFunction {
         return distance * gasCost;
     }
 
-    public static double calculate_travel_time (double distance) {
-        medVel = medVel * 3.6;
-        return medVel * distance;
+    public static double calculate_fitness (Solution solution) {
+        List<Routes> routes = solution.getSolution();
+        List<Routes> tempRoutes = new ArrayList<Routes>();
+        double fitness = 0d;
+        int j = 0;
+        int i = 0;
+        while (j < routes.size()) {
+            tempRoutes.clear();
+            if (i>0) {
+                i++;
+            }
+            if (i <= routes.size()) {
+                while (routes.get(i).getSeparator() == null) {
+                    tempRoutes.add(routes.get(i));
+                    i++;
+                }
+                fitness += calculate_fitness_value(tempRoutes);
+            }
+            j++;
+
+        }
+        return fitness;
     }
 
-    public static double calculate_fitness (Routes[] solution) {
+    public static double calculate_fitness_value (List<Routes> rt) {
         double x1, x2, y1, y2, garbageTotal = 0, totalTimeCost = 0, totalDistanceCost = 0, fitness = 0, trucksQty = 0;
-        int size = solution.length;
+        int size = rt.size();
         for (int i = 0; i < size; i++) {
             if (i == size - 1) {
-                x1 = solution[i].getX();
+                x1 = rt.get(i).getX();
                 x2 = 0;
-                y1 = solution[i].getY();
+                y1 = rt.get(i).getY();
                 y2 = 0;
             } else {
-                x1 = solution[i].getX();
-                x2 = solution[i+1].getX();
-                y1 = solution[i].getY();
-                y2 = solution[i+1].getY();
+                x1 = rt.get(i).getX();
+                x2 = rt.get(i).getX();
+                y1 = rt.get(i).getY();
+                y2 = rt.get(i).getY();
             }
             totalDistanceCost = totalDistanceCost + (calculate_distance_cost(x1, x2, y1, y2) / worst_distance_cost());
-            garbageTotal = garbageTotal + solution[i].getGarbage();
+            garbageTotal = garbageTotal + rt.get(i).getGarbage();
 //            totalTimeCost = totalTimeCost + calculate_travel_time(calculate_distance_cost(x1, x2, y1, y2));
         }
-        totalDistanceCost = totalDistanceCost / solution.length;
+
+        totalDistanceCost = totalDistanceCost / rt.size();
 
         trucksQty = garbageTotal / main.truckLoad;
 
