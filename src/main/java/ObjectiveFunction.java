@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by fox on 27/09/17.
@@ -35,24 +37,27 @@ public class ObjectiveFunction {
 
     public static double calculate_fitness (Solution solution) {
         List<Routes> routes = solution.getSolution();
-        List<Routes> tempRoutes = new ArrayList<Routes>();
+        List<Routes> temp = new ArrayList<Routes>();
         double fitness = 0d;
-        int j = 0;
-        int i = 0;
-        while (j < routes.size()) {
-            tempRoutes.clear();
-            if (i>0) {
-                i++;
+        int initialIndex = 0;
+        int finalIndex = 0;
+        int index = 0;
+        while (finalIndex < routes.size()-1 && index < routes.size()-1) {
+            if (index==0 && routes.get(index).getSeparator() != null) {
+                index++;
             }
-            if (i <= routes.size()) {
-                while (routes.get(i).getSeparator() == null) {
-                    tempRoutes.add(routes.get(i));
-                    i++;
-                }
-                fitness += calculate_fitness_value(tempRoutes);
+            if (index > 0 && routes.get(index).getSeparator() != null) {
+                index++;
             }
-            j++;
-
+            while (routes.get(index).getSeparator() == null && index < routes.size()-1) {
+                temp.add(routes.get(index));
+                index++;
+            }
+            if (temp.size() > 0) {
+                fitness += calculate_fitness_value(temp);
+            }
+            temp.clear();
+            finalIndex++;
         }
         return fitness;
     }
@@ -68,9 +73,9 @@ public class ObjectiveFunction {
                 y2 = 0;
             } else {
                 x1 = rt.get(i).getX();
-                x2 = rt.get(i).getX();
+                x2 = rt.get(i+1).getX();
                 y1 = rt.get(i).getY();
-                y2 = rt.get(i).getY();
+                y2 = rt.get(i+1).getY();
             }
             totalDistanceCost = totalDistanceCost + (calculate_distance_cost(x1, x2, y1, y2) / worst_distance_cost());
             garbageTotal = garbageTotal + rt.get(i).getGarbage();
