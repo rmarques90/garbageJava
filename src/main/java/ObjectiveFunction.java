@@ -39,9 +39,10 @@ public class ObjectiveFunction {
         List<Routes> routes = solution.getSolution();
         List<Routes> temp = new ArrayList<Routes>();
         double fitness = 0d;
-        int initialIndex = 0;
         int finalIndex = 0;
         int index = 0;
+        int trucksQty = 0;
+        //percorrer lista e dividir em listas menores por caminhão
         while (finalIndex < routes.size()-1 && index < routes.size()-1) {
             if (index==0 && routes.get(index).getSeparator() != null) {
                 index++;
@@ -55,15 +56,18 @@ public class ObjectiveFunction {
             }
             if (temp.size() > 0) {
                 fitness += calculate_fitness_value(temp);
+                trucksQty++;
             }
             temp.clear();
             finalIndex++;
         }
+        fitness += trucksQty / main.trucks;
+        solution.setFitness(fitness);
         return fitness;
     }
 
     public static double calculate_fitness_value (List<Routes> rt) {
-        double x1, x2, y1, y2, garbageTotal = 0, totalTimeCost = 0, totalDistanceCost = 0, fitness = 0, trucksQty = 0;
+        double x1, x2, y1, y2, garbageTotal = 0, totalTimeCost = 0, totalDistanceCost = 0, fitness = 0;
         int size = rt.size();
         for (int i = 0; i < size; i++) {
             if (i == size - 1) {
@@ -84,9 +88,7 @@ public class ObjectiveFunction {
 
         totalDistanceCost = totalDistanceCost / rt.size();
 
-        trucksQty = garbageTotal / main.truckLoad;
-
-        fitness = totalDistanceCost + (garbageTotal / calculate_total_garbage()) + trucksQty;
+        fitness = totalDistanceCost + (garbageTotal / calculate_total_garbage());
         return fitness;
     }
 
