@@ -3,6 +3,8 @@ package Utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Utils.Constants.*;
+
 /**
  * Created by fox on 27/09/17.
  */
@@ -17,13 +19,13 @@ public class ObjectiveFunction {
     }
 
     public static double worst_distance_cost () {
-        return (main.workHours * medVel) * gasCost;
+        return (workHours * medVel) * gasCost;
     }
 
     public static double calculate_total_garbage () {
         double totalGarbage = 0;
-        for (int i=0; i < main.nodes.size(); i++) {
-            totalGarbage += main.nodes.get(i).getGarbage();
+        for (int i=0; i < nodes.size(); i++) {
+            totalGarbage += nodes.get(i).getGarbage();
         }
         return totalGarbage;
     }
@@ -64,7 +66,7 @@ public class ObjectiveFunction {
             temp.clear();
             finalIndex++;
         }
-        fitness -= trucksQty / main.trucks;
+        fitness -= trucksQty / trucks;
         return fitness;
     }
 
@@ -93,7 +95,7 @@ public class ObjectiveFunction {
         for (int i=0; i < rt.size(); i++) {
             totalGarbage += rt.get(i).getGarbage();
         }
-        garbageFitness = totalGarbage / main.truckLoad;
+        garbageFitness = totalGarbage / truckLoad;
         return garbageFitness;
     }
 
@@ -104,15 +106,5 @@ public class ObjectiveFunction {
         }
         totalCollectTime = totalDistance * medVel;
         return collectTimeFitness;
-    }
-
-    public static Boolean check_best_solution_by_fitness (Solution solution) {
-        double oldFitness = main.finalSolution.getFitness();
-        if (solution.getFitness() > oldFitness) {
-            main.finalSolution = solution;
-            return true;
-        } else {
-            return false;
-        }
     }
 }

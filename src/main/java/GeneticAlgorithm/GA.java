@@ -5,7 +5,9 @@ import org.apache.commons.math3.genetics.*;
 
 import java.util.*;
 
-//https://www.programcreek.com/java-api-examples/index.php?source_dir=CARMA-master/SIMULATION/eu.quanticol.ms/libs/commons-math3-3.4.1-src/src/userguide/java/org/apache/commons/math3/userguide/genetics/HelloWorldExample.java
+import static Utils.Constants.generations;
+import static Utils.Constants.nodes;
+
 public class GA {
     public static final int    POPULATION_SIZE   = 10000;
     public static final double CROSSOVER_RATE    = 0.9;
@@ -33,7 +35,7 @@ public class GA {
                 generation++;
 
                 double fitness = fittestChromosome.fitness();
-                if (fitness < 4 && generation > 100) {
+                if (generation == generations) {
                     System.out.println(fitness);
                     return true;
                 } else {
@@ -42,8 +44,6 @@ public class GA {
                 }
             }
         };
-
-//        StoppingCondition stoppingCondition = new FixedGenerationCount(3000);
 
         System.out.println("Starting evolution...");
 
@@ -58,15 +58,10 @@ public class GA {
 
     private static Population getInitialPopulation() {
         List<Chromosome> popList = new LinkedList<Chromosome>();
-        List<Routes> rt = new ArrayList<Routes>();
-        Random random = new Random();
+        Routes.initialize_collect_points(true);
 
         for(int i = 0; i < POPULATION_SIZE; i++) {
-            for (int j = 0; j < 60; j++) {
-                rt.add(new Routes(random.nextInt(10),random.nextInt(10),random.nextInt(20),j));
-            }
-            popList.add(new RouteChromosome(rt));
-            rt.clear();
+            popList.add(new RouteChromosome(nodes));
         }
         return new ElitisticListPopulation(popList, 2 * popList.size(), ELITISM_RATE);
     }

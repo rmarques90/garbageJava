@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static Utils.Constants.*;
+
 /**
  * Created by fox on 26/09/17.
  */
@@ -69,14 +71,14 @@ public class Routes {
     }
 
     public static List<Routes> generate_random_solution () {
-        int size = main.pointsNumber + main.trucks;
+        int size = pointsNumber + trucks;
         List<Routes> randomSolution = new ArrayList<Routes>();
         Random random = new Random();
         for (int i = 0; i < size; i++) {
-            if (i >= main.pointsNumber && i < size) {
+            if (i >= pointsNumber && i < size) {
                 randomSolution.add(new Routes("t"));
             } else {
-                if (i == (main.pointsNumber - 1) || i == 0) {
+                if (i == (pointsNumber - 1) || i == 0) {
                     randomSolution.add(new Routes(0, 0, 0, 0));
                 } else {
                     randomSolution.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
@@ -89,8 +91,8 @@ public class Routes {
     }
 
     public static void initialize_garbage_trucks (int qty) {
-        if (qty <= main.max_allowed_trucks) {
-            main.trucks = qty;
+        if (qty <= max_allowed_trucks) {
+            trucks = qty;
         } else {
             System.out.println("Número máximo de caminhões excedido.");
             System.exit(1);
@@ -105,15 +107,15 @@ public class Routes {
             String[] splitted;
 
             try {
-                stream = new BufferedReader(new FileReader(main.routesFilePath));
+                stream = new BufferedReader(new FileReader(routesFilePath));
                 while ((stream.readLine()) != null) {
-                    main.pointsNumber++;
+                    pointsNumber++;
                 }
-                stream = new BufferedReader(new FileReader(main.routesFilePath));
-                main.nodes = new ArrayList<Routes>();
+                stream = new BufferedReader(new FileReader(routesFilePath));
+                nodes = new ArrayList<Routes>();
                 while ((line = stream.readLine()) != null) {
                     splitted = line.split(";");
-                    main.nodes.add(new Routes(
+                    nodes.add(new Routes(
                             Double.parseDouble(splitted[0]),
                             Double.parseDouble(splitted[1]),
                             Double.parseDouble(splitted[2]),
@@ -122,16 +124,16 @@ public class Routes {
             } catch (Exception e) {
                 System.out.println(e);
             }
-            main.pointsNumber = main.nodes.size();
-            main.matrix = Routes.build_matrix(main.nodes);
+            pointsNumber = nodes.size();
+            matrix = Routes.build_matrix(nodes);
         } else {
             Random random = new Random();
-            main.nodes = new ArrayList<Routes>();
-            main.pointsNumber = 10;
-            for (int i = 0; i < main.pointsNumber; i++){
-                main.nodes.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
+            nodes = new ArrayList<Routes>();
+            pointsNumber = 10;
+            for (int i = 0; i < pointsNumber; i++){
+                nodes.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
             }
-            main.matrix = Routes.build_matrix(main.nodes);
+            matrix = Routes.build_matrix(nodes);
         }
     }
 
