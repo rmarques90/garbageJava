@@ -70,35 +70,6 @@ public class Routes {
         return collectPoint;
     }
 
-    public static List<Routes> generate_random_solution () {
-        int size = pointsNumber + trucks;
-        List<Routes> randomSolution = new ArrayList<Routes>();
-        Random random = new Random();
-        for (int i = 0; i < size; i++) {
-            if (i >= pointsNumber && i < size) {
-                randomSolution.add(new Routes("t"));
-            } else {
-                if (i == (pointsNumber - 1) || i == 0) {
-                    randomSolution.add(new Routes(0, 0, 0, 0));
-                } else {
-                    randomSolution.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
-                }
-            }
-        }
-        //shuffle the array
-        Collections.shuffle(randomSolution);
-        return randomSolution;
-    }
-
-    public static void initialize_garbage_trucks (int qty) {
-        if (qty <= max_allowed_trucks) {
-            trucks = qty;
-        } else {
-            System.out.println("Número máximo de caminhões excedido.");
-            System.exit(1);
-        }
-    }
-
     public static void initialize_collect_points(Boolean csvFile) {
         if (csvFile) {
             String line;
@@ -125,46 +96,17 @@ public class Routes {
                 System.out.println(e);
             }
             pointsNumber = nodes.size();
-            matrix = Routes.build_matrix(nodes);
         } else {
             Random random = new Random();
-            nodes = new ArrayList<Routes>();
-            pointsNumber = 10;
-            for (int i = 0; i < pointsNumber; i++){
+            nodes = new ArrayList<Routes>();;
+            for (int i = 0; i < 10; i++){
                 nodes.add(new Routes(i*random.nextInt(30), i*random.nextInt(30), i*random.nextInt(10), i));
             }
-            matrix = Routes.build_matrix(nodes);
         }
-    }
-
-    public static double[][] build_matrix (List<Routes> collectPoints) {
-        double[][] matrix = new double[collectPoints.size()][5];
-        for (int i = 0; i < collectPoints.size(); i++) {
-            matrix[i][0] = collectPoints.get(i).x;
-            matrix[i][1] = collectPoints.get(i).y;
-            matrix[i][2] = collectPoints.get(i).garbage;
-            matrix[i][3] = collectPoints.get(i).collectPoint;
+        for (int i =0; i <= trucks; i++) {
+            nodes.add(new Routes("t"));
+            nodes.add(new Routes(0,0,0,0));
         }
-        return matrix;
+        pointsNumber = nodes.size() - trucks;
     }
-
-//        public static void build_distance_matrix () {
-//        double distance = 0;
-//        double[][] tempDistance = new double[main.matrix.length][main.matrix.length];
-//        for (int i = 0; i < main.matrix.length; i ++) {
-//            for (int j = 0; j < main.matrix.length; j ++) {
-//                distance = ObjectiveFunction.calculate_distance(main.matrix[i][0], main.matrix[j][0], main.matrix[i][1], main.matrix[j][1]);
-//                tempDistance[i][j] = distance;
-//            }
-//        }
-//        main.distanceMatrix = new double[tempDistance.length][tempDistance[0].length];
-//        main.distanceMatrix = tempDistance;
-//
-//        for (int i = 0; i < main.distanceMatrix.length; i ++) {
-//            for (int j = 0; j < main.distanceMatrix[0].length; j++) {
-//                System.out.print(main.distanceMatrix[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//    }
 }

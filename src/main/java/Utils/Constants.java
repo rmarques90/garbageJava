@@ -8,7 +8,6 @@ public class Constants {
     public static int generations = 1000;
 
     public static int workHours = 6;
-    public static int max_allowed_trucks = 10;
     public static int trucks = 5;
     public static int truckLoad = 300;
 

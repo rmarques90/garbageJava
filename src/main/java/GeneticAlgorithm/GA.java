@@ -12,7 +12,7 @@ public class GA {
     public static final int    POPULATION_SIZE   = 10000;
     public static final double CROSSOVER_RATE    = 0.9;
     public static final double MUTATION_RATE     = 0.3;
-    public static final double ELITISM_RATE      = 0.4;
+    public static final double ELITISM_RATE      = 0.1;
     public static final int    TOURNAMENT_ARITY  = 2;
 
     public static void main(String[] args) {
