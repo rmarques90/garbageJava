@@ -7,11 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Stopwatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,16 +23,46 @@ import java.util.List;
  */
 public class Maps {
 
+    private static Logger logger = LoggerFactory.getLogger(Maps.class);
+
+    private static String csvFile = "address.csv";
+    private static String line = "";
+    private static String csvSplitBy = ",";
+
     private static String keyGeo =  "AIzaSyAQOmyCzcNMFx8h5c3bGifWfXMEW4oqyTo";
     private static String keyPlace =  "AIzaSyDOg-dJ-iwOf1jDyiwsR4TFor0bD0BYLoU";
 
+    private static List<String> getAddress() throws FileNotFoundException {
+        logger.info("Iniciando leitura do CSV");
+        List<String> address = new ArrayList<String>();
+        File file = new File(csvFile);
+        if (file.exists()) {
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                while ((line = br.readLine()) != null) {
+                    String[] lineAddress = line.split(csvSplitBy);
+                    address.add(lineAddress[0]);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            logger.info("Leitura CSV finalizada.");
+            return address;
+        } else {
+            return null;
+        }
+    }
+
     private static void getGeocoding() throws MalformedURLException {
 //        https://developers.google.com/maps/documentation/geocoding/intro#GeocodingRequests
-        List<String> adds = new ArrayList<String>();
-        adds.add("Res.+Porto+Seguro");
-        adds.add("Avenida+C+1");
-        adds.add("Avenida+C+104");
         try {
+            List<String> adds;
+            try {
+                adds = getAddress();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+
             ObjectMapper obj = new ObjectMapper();
             obj.configure(
                     DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -44,6 +74,7 @@ public class Maps {
             ArrayNode arrayNode = obj.createArrayNode();
 
             while (i <= adds.size() - 1) {
+                logger.info("Capturando coordenada do CEP: {}", adds.get(i));
                 URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + adds.get(i) + "&key=" + keyGeo);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -51,7 +82,7 @@ public class Maps {
                 try {
                     InputStream in = connection.getInputStream();
                     JsonNode treeNode = obj.readTree(in);
-                    street = treeNode.path("results").get(0).get("address_components").get(0).get("long_name").toString().replaceAll("\"", "");
+                    street = treeNode.path("results").get(0).get("formatted_address").toString().replaceAll("\"", "");
                     JsonNode geometryNode = treeNode.path("results").get(0).get("geometry").get("location");
                     lat = geometryNode.get("lat").toString().replaceAll("\"", "");
                     lng = geometryNode.get("lng").toString().replaceAll("\"", "");
@@ -62,22 +93,21 @@ public class Maps {
                     objectNode.put("lng", lng);
                     objectNode.put("add", street);
                     arrayNode.add(objectNode);
+
                     i++;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
         }
+            logger.info("##### Salvando JSON... #####");
             File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "ends.json");
             ObjectWriter writer = obj.writer(new DefaultPrettyPrinter());
             writer.writeValue(file, arrayNode);
+            logger.info("##### JSON salvo com sucesso #####");
 
         } catch(Exception e){
             e.printStackTrace();
         }
-    }
-
-    private static String transformJSON(Integer index, String lat, String lng, String add) {
-        return "{\"index\":\""+ String.valueOf(index) + "\",\"lat\":\""+ lat + "\",\"lng\":\"" + lng + "\",\"address\":" + add + "\"}";
     }
 
     private static void getNearbySearch() {
@@ -114,7 +144,10 @@ public class Maps {
     }
 
     public static void main(String[] args) throws MalformedURLException {
+        Stopwatch counter = Stopwatch.createStarted();
+        logger.info("##### Iniciando captura de coordenadas... #####");
         getGeocoding();
+        logger.info("##### Tempo de execução da captura de coordenadas: {}", counter.stop());
         //        https://www.quora.com/How-do-you-get-boundaries-of-neighborhoods-via-the-Google-Maps-api
 //        https://stackoverflow.com/questions/10522393/google-maps-get-polygon-border-of-zones-neighborhood
 //        http://wikimapia.org/api/
