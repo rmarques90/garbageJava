@@ -100,7 +100,7 @@ public class Maps {
                 }
         }
             logger.info("##### Salvando JSON... #####");
-            File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "ends.json");
+            File file = new File(System.getProperty("user.dir") + File.separator + "ends.json");
             ObjectWriter writer = obj.writer(new DefaultPrettyPrinter());
             writer.writeValue(file, arrayNode);
             logger.info("##### JSON salvo com sucesso #####");
