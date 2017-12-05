@@ -1,5 +1,13 @@
 package MapsAPI;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -7,6 +15,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by fox on 21/11/17.
@@ -18,33 +28,56 @@ public class Maps {
 
     private static void getGeocoding() throws MalformedURLException {
 //        https://developers.google.com/maps/documentation/geocoding/intro#GeocodingRequests
+        List<String> adds = new ArrayList<String>();
+        adds.add("Res.+Porto+Seguro");
+        adds.add("Avenida+C+1");
+        adds.add("Avenida+C+104");
         try {
-            String address = "Res.+Porto+Seguro";
-            URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + keyGeo);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            ObjectMapper obj = new ObjectMapper();
+            obj.configure(
+                    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            try {
-                File file = new File(System.getProperty("java.io.tmpdir") + File.separator + address +".json");
-                InputStream in = connection.getInputStream();
-                FileOutputStream fos = new FileOutputStream(file);
+            int i = 0;
+            String lat = "";
+            String lng = "";
+            String street = "";
+            ArrayNode arrayNode = obj.createArrayNode();
 
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = in.read(buffer)) != -1) {
-                    fos.write(buffer, 0, length);
+            while (i <= adds.size() - 1) {
+                URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + adds.get(i) + "&key=" + keyGeo);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+
+                try {
+                    InputStream in = connection.getInputStream();
+                    JsonNode treeNode = obj.readTree(in);
+                    street = treeNode.path("results").get(0).get("address_components").get(0).get("long_name").toString().replaceAll("\"", "");
+                    JsonNode geometryNode = treeNode.path("results").get(0).get("geometry").get("location");
+                    lat = geometryNode.get("lat").toString().replaceAll("\"", "");
+                    lng = geometryNode.get("lng").toString().replaceAll("\"", "");
+
+                    ObjectNode objectNode = obj.createObjectNode();
+                    objectNode.put("index", i);
+                    objectNode.put("lat", lat);
+                    objectNode.put("lng", lng);
+                    objectNode.put("add", street);
+                    arrayNode.add(objectNode);
+                    i++;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                in.close();
-                fos.flush();
-                fos.close();
-                System.out.print("Arquivo Salvo");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        }
+            File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "ends.json");
+            ObjectWriter writer = obj.writer(new DefaultPrettyPrinter());
+            writer.writeValue(file, arrayNode);
 
-        } catch (Exception e) {
+        } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    private static String transformJSON(Integer index, String lat, String lng, String add) {
+        return "{\"index\":\""+ String.valueOf(index) + "\",\"lat\":\""+ lat + "\",\"lng\":\"" + lng + "\",\"address\":" + add + "\"}";
     }
 
     private static void getNearbySearch() {
